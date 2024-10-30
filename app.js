@@ -33,8 +33,9 @@ async function renderPage(pageNum) {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     
-    // Adjust the viewport scale for full-screen on mobile
-    const viewport = page.getViewport({ scale: window.innerWidth / page.getViewport({ scale: 1 }).width });
+    // Adjust the viewport scale for high quality on mobile
+    const scale = window.innerWidth > 768 ? 1.5 : 2; // Larger scale for better quality
+    const viewport = page.getViewport({ scale: scale }); // Adjusted scale for better quality
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
