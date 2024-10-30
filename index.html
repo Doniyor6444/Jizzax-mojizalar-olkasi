@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JIZZAX MO'JIZALAR O'LKASI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1 id="main-title">JIZZAX MO'JIZALAR O'LKASI</h1>
+        <div id="reload-message" style="display: none; color: red; text-align: center;"></div>
+    </header>
+
+    <!-- PDF Viewer Container -->
+    <div class="viewer-container">
+        <div class="controls">
+            <select id="language">
+                <option value="uz">O'zbek</option>
+                <option value="ru">Русский</option>
+                <option value="en">English</option>
+            </select>
+            <div id="loading" class="spinner">
+                <span id="loading-text">Yuklanmoqda...</span>
+                <div class="spinner-border"></div>
+            </div>
+        </div>
+        <div id="pdf-viewer"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Designed by IT PROGRESS</p>
+    </footer>
+
+    <!-- PDF.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

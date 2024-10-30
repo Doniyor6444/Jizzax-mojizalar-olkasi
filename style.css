@@ -1,0 +1,119 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+
+header {
+    background: rgba(74, 144, 226, 0.9); /* Added transparency */
+    color: white;
+    text-align: center;
+    padding: 20px 20px;
+    border-bottom: 4px solid #4a90e2;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+.viewer-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 15px;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#language {
+    background-color: #4a90e2;
+    color: white;
+    padding: 6px 15px;
+    border-radius: 5px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+#pdf-viewer {
+    background: rgba(255, 255, 255, 0.9); /* Slight transparency for readability */
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+#loading {
+    display: none;
+    align-items: center;
+    gap: 10px;
+}
+
+#loading-text {
+    font-size: 1rem;
+    color: #353838;
+}
+
+.spinner {
+    display: flex;
+    align-items: center;
+}
+
+.spinner-border {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 3px solid transparent;
+    border-top-color: #66d1d7;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+canvas {
+    display: block;
+    margin: 15px auto;
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+footer {
+    background-color: rgba(74, 144, 226, 0.9);
+    color: white;
+    text-align: center;
+    padding: 15px;
+    margin-top: 30px; /* Reduced margin for better spacing */
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.9rem;
+    }
+    #pdf-viewer {
+        max-height: 80vh;
+    }
+}
+
+@media (max-width: 576px) {
+    header h1 {
+        font-size: 1.6rem;
+    }
+    #pdf-viewer {
+        max-height: 90vh;
+    }
+}
