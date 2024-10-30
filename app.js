@@ -5,19 +5,19 @@ const pdfFiles = {
     'uz': 'fayl/Uzbekcha.fayl.pdf',
     'ru': 'fayl/Ruscha.fayl.pdf',
     'en': 'fayl/English.fayl.pdf'
-}
+};
 
 const mainTitles = {
     'uz': 'JIZZAX MO\'JIZALAR O\'LKASI',
     'ru': 'ДЖИЗЗАХ  ЗЕМЛЯ ЧУДЕС',
     'en': 'DJIZZAKH LAND OF WONDERLAND'
-}
+};
 
 const reloadMessages = {
     'uz': 'Iltimos, sahifani qaytadan yuklang',
     'ru': 'Пожалуйста, перезагрузите страницу',
     'en': 'Please reload the page'
-}
+};
 
 const languageSelector = document.getElementById('language');
 const pdfViewer = document.getElementById('pdf-viewer');
@@ -32,10 +32,10 @@ async function renderPage(pageNum) {
     const page = await pdfDoc.getPage(pageNum);
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    
-    // Adjust the viewport scale for high quality on mobile
-    const scale = window.innerWidth > 768 ? 1.5 : 2; // Larger scale for better quality
-    const viewport = page.getViewport({ scale: scale }); // Adjusted scale for better quality
+
+    // Adjust the viewport scale for high quality on mobile and desktop
+    const scale = window.innerWidth < 768 ? 1.5 : 2; // 768px dan kichik bo'lsa, 1.5; katta bo'lsa 2
+    const viewport = page.getViewport({ scale: scale });
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
@@ -58,15 +58,9 @@ async function loadPDF(lang) {
         pdfDoc = await pdfjsLib.getDocument(url).promise;
         const numPages = pdfDoc.numPages;
 
-        // Render the first 100 pages
-        const pagesToLoad = Math.min(numPages, 100);
-        for (let pageNum = 1; pageNum <= pagesToLoad; pageNum++) {
+        // Render all pages for high-quality viewing
+        for (let pageNum = 1; pageNum <= numPages; pageNum++) {
             await renderPage(pageNum);
-        }
-
-        // Load remaining pages in the background
-        for (let pageNum = pagesToLoad + 1; pageNum <= numPages; pageNum++) {
-            renderPage(pageNum);
         }
     } catch (error) {
         console.error('Error loading PDF:', error);
@@ -92,6 +86,6 @@ languageSelector.addEventListener('change', function() {
     localStorage.setItem('pdfLanguage', this.value); // Save the selected language
     reloadMessage.textContent = reloadMessages[this.value]; // Yozuvni tanlangan tilga mos qilib o'rnat
     reloadMessage.style.display = 'block'; // Yozuvni ko'rsat
-    loadPDF(this.value);      // Load the new PDF
+    loadPDF(this.value); // Load the new PDF
     mainTitle.textContent = mainTitles[this.value];
 });
