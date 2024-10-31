@@ -7,14 +7,14 @@
 body {
     font-family: 'Poppins', sans-serif;
     color: #333;
-    background-color: #f0f0f5; /* Body fon rangi */
+    background-color: #f0f0f5;
 }
 
 header {
-    background: rgba(74, 144, 226, 0.9); /* Transparency qo'shildi */
+    background: rgba(74, 144, 226, 0.9);
     color: white;
     text-align: center;
-    padding: 20px 20px;
+    padding: 20px;
     border-bottom: 4px solid #4a90e2;
 }
 
@@ -25,7 +25,7 @@ header h1 {
 
 .viewer-container {
     max-width: 1200px;
-    margin: 30px auto;
+    margin: 20px auto;
     padding: 15px;
 }
 
@@ -33,24 +33,23 @@ header h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 #language {
     background-color: #4a90e2;
     color: white;
-    padding: 6px 15px;
+    padding: 8px 15px;
     border-radius: 5px;
     border: none;
     font-size: 1rem;
     cursor: pointer;
 }
 
-#pdf-viewer {
-    background: rgba(255, 255, 255, 0.9); /* Yozuvlarni yaxshiroq o'qish uchun */
+.pdf-viewer {
+    background: rgba(255, 255, 255, 0.9);
     border-radius: 12px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    padding: 20px;
     max-height: 80vh;
     overflow-y: auto;
 }
@@ -58,17 +57,13 @@ header h1 {
 #loading {
     display: none;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+    padding: 10px;
 }
 
 #loading-text {
     font-size: 1rem;
     color: #353838;
-}
-
-.spinner {
-    display: flex;
-    align-items: center;
 }
 
 .spinner-border {
@@ -88,9 +83,9 @@ header h1 {
 
 canvas {
     display: block;
-    margin: 15px auto;
+    margin: 10px auto;
+    width: 100%;
     max-width: 100%;
-    width: 100%; /* Kenglikni moslash */
     border-radius: 8px;
 }
 
@@ -99,30 +94,17 @@ footer {
     color: white;
     text-align: center;
     padding: 15px;
-    margin-top: 30px; /* Bo'sh joylar kamaytirildi */
+    margin-top: 20px;
 }
 
-/* Mobil moslashuv */
 @media (max-width: 768px) {
     header h1 {
-        font-size: 1.9rem;
-    }
-    #pdf-viewer {
-        max-height: 80vh;
+        font-size: 1.8rem;
     }
 }
 
 @media (max-width: 576px) {
     header h1 {
-        font-size: 1.6rem;
-    }
-    #pdf-viewer {
-        max-height: 90vh;
-        padding: 10px;
-    }
-    canvas {
-        max-width: 100%;
-        height: auto; /* To'liq ekran uchun moslash */
-        border-radius: 8px;
+        font-size: 1.5rem;
     }
 }
