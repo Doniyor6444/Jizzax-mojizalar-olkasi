@@ -7,10 +7,11 @@
 body {
     font-family: 'Poppins', sans-serif;
     color: #333;
+    background-color: #f0f0f5; /* Body fon rangi */
 }
 
 header {
-    background: rgba(74, 144, 226, 0.9); /* Added transparency */
+    background: rgba(74, 144, 226, 0.9); /* Transparency qo'shildi */
     color: white;
     text-align: center;
     padding: 20px 20px;
@@ -46,7 +47,7 @@ header h1 {
 }
 
 #pdf-viewer {
-    background: rgba(255, 255, 255, 0.9); /* Slight transparency for readability */
+    background: rgba(255, 255, 255, 0.9); /* Yozuvlarni yaxshiroq o'qish uchun */
     border-radius: 12px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     padding: 20px;
@@ -89,6 +90,7 @@ canvas {
     display: block;
     margin: 15px auto;
     max-width: 100%;
+    width: 100%; /* Kenglikni moslash */
     border-radius: 8px;
 }
 
@@ -97,9 +99,10 @@ footer {
     color: white;
     text-align: center;
     padding: 15px;
-    margin-top: 30px; /* Reduced margin for better spacing */
+    margin-top: 30px; /* Bo'sh joylar kamaytirildi */
 }
 
+/* Mobil moslashuv */
 @media (max-width: 768px) {
     header h1 {
         font-size: 1.9rem;
@@ -115,5 +118,11 @@ footer {
     }
     #pdf-viewer {
         max-height: 90vh;
+        padding: 10px;
+    }
+    canvas {
+        max-width: 100%;
+        height: auto; /* To'liq ekran uchun moslash */
+        border-radius: 8px;
     }
 }

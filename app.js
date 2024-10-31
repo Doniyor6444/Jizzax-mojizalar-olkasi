@@ -1,4 +1,3 @@
-// PDF.js worker setup
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
 const pdfFiles = {
@@ -8,8 +7,8 @@ const pdfFiles = {
 };
 
 const mainTitles = {
-    'uz': 'JIZZAX MO\'JIZALAR O\'LKASI',
-    'ru': 'ДЖИЗЗАХ  ЗЕМЛЯ ЧУДЕС',
+    'uz': "JIZZAX MO'JIZALAR O'LKASI",
+    'ru': 'ДЖИЗЗАХ ЗЕМЛЯ ЧУДЕС',
     'en': 'DJIZZAKH LAND OF WONDERLAND'
 };
 
@@ -23,69 +22,89 @@ const languageSelector = document.getElementById('language');
 const pdfViewer = document.getElementById('pdf-viewer');
 const loadingIndicator = document.getElementById('loading');
 const mainTitle = document.getElementById('main-title');
-const reloadMessage = document.getElementById('reload-message'); // Yozuv uchun element
+const reloadMessage = document.getElementById('reload-message');
 
 let pdfDoc = null;
+let currentPage = 1;
+let isRendering = false;
+let pageRenderingQueue = null;
 
-// Function to render a page
+// Sahifa o'lchamini avtomatik moslash uchun viewport scale ni dinamik sozlash
+function getScaleFactor() {
+    const maxWidth = 600; // Mobil ekranlarda maksimal kenglikni 600px bilan cheklash
+    return Math.min(window.innerWidth / maxWidth, 2); // Maksimal 2 marta kattalashtirish
+}
+
+// Sahifani yuklash va keshlash
 async function renderPage(pageNum) {
+    if (isRendering) {
+        pageRenderingQueue = pageNum;
+        return;
+    }
+
+    isRendering = true;
     const page = await pdfDoc.getPage(pageNum);
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-
-    // Adjust the viewport scale for high quality on mobile and desktop
-    const scale = window.innerWidth < 768 ? 1.5 : 2; // 768px dan kichik bo'lsa, 1.5; katta bo'lsa 2
+    
+    const scale = getScaleFactor();
     const viewport = page.getViewport({ scale: scale });
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
-    // Render the page to the canvas
     await page.render({
         canvasContext: context,
         viewport: viewport
     }).promise;
 
-    // Append the canvas to the viewer
     pdfViewer.appendChild(canvas);
-}
+    isRendering = false;
 
-// Function to load the entire PDF and render pages
-async function loadPDF(lang) {
-    const url = `${pdfFiles[lang]}?t=${new Date().getTime()}`;
-    loadingIndicator.style.display = 'flex'; // Show loading indicator
-
-    try {
-        pdfDoc = await pdfjsLib.getDocument(url).promise;
-        const numPages = pdfDoc.numPages;
-
-        // Render all pages for high-quality viewing
-        for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-            await renderPage(pageNum);
-        }
-    } catch (error) {
-        console.error('Error loading PDF:', error);
-    } finally {
-        loadingIndicator.style.display = 'none'; // Hide loading indicator
+    if (pageRenderingQueue) {
+        renderPage(pageRenderingQueue);
+        pageRenderingQueue = null;
     }
 }
 
-// Load saved language from local storage
-const savedLanguage = localStorage.getItem('pdfLanguage') || 'uz';
-languageSelector.value = savedLanguage;
+// Har bir sahifani sekretsiya qilish orqali yuklash
+async function queueRenderPage(pageNum) {
+    if (pageNum <= pdfDoc.numPages) {
+        await renderPage(pageNum);
+        currentPage = pageNum + 1;
+        queueRenderPage(currentPage);
+    }
+}
 
-// Initial PDF loading and text on window load
-window.onload = function() {
-    loadPDF(languageSelector.value); // Load PDF based on saved language
-    mainTitle.textContent = mainTitles[languageSelector.value];
-    reloadMessage.style.display = 'none'; // Yozuvni yashir
-};
+// PDF yuklash va keshlash
+async function loadPDF(lang) {
+    const url = `${pdfFiles[lang]}?t=${new Date().getTime()}`;
+    loadingIndicator.style.display = 'flex';
+    try {
+        pdfDoc = await pdfjsLib.getDocument(url).promise;
+        currentPage = 1;
+        queueRenderPage(currentPage);
+    } catch (error) {
+        console.error('Error loading PDF:', error);
+    } finally {
+        loadingIndicator.style.display = 'none';
+    }
+}
 
-// Language change event
+// Yangi tilni tanlaganda keshni tozalash va PDF-ni qayta yuklash
 languageSelector.addEventListener('change', function() {
-    pdfViewer.innerHTML = ''; // Clear the viewer for the new language
-    localStorage.setItem('pdfLanguage', this.value); // Save the selected language
-    reloadMessage.textContent = reloadMessages[this.value]; // Yozuvni tanlangan tilga mos qilib o'rnat
-    reloadMessage.style.display = 'block'; // Yozuvni ko'rsat
-    loadPDF(this.value); // Load the new PDF
+    pdfViewer.innerHTML = '';
+    localStorage.setItem('pdfLanguage', this.value);
+    reloadMessage.textContent = reloadMessages[this.value];
+    reloadMessage.style.display = 'block';
+    loadPDF(this.value);
     mainTitle.textContent = mainTitles[this.value];
 });
+
+// Ilk yuklash
+window.onload = function() {
+    const savedLanguage = localStorage.getItem('pdfLanguage') || 'uz';
+    languageSelector.value = savedLanguage;
+    loadPDF(languageSelector.value);
+    mainTitle.textContent = mainTitles[savedLanguage];
+    reloadMessage.style.display = 'none';
+};
