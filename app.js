@@ -27,18 +27,19 @@ const reloadMessage = document.getElementById('reload-message');
 let pdfDoc = null;
 let currentPage = 1;
 let isRendering = false;
-let pageRenderingQueue = null;
+let pageRenderingQueue = [];
 
 // Sahifa o'lchamini avtomatik moslash uchun viewport scale ni dinamik sozlash
 function getScaleFactor() {
-    const maxWidth = 600; // Mobil ekranlarda maksimal kenglikni 600px bilan cheklash
-    return Math.min(window.innerWidth / maxWidth, 2); // Maksimal 2 marta kattalashtirish
+    const maxWidth = 1200; // Maksimal kenglik
+    const scaleFactor = window.innerWidth / maxWidth;
+    return Math.min(scaleFactor, 2); // 2 marta kattalashtirish
 }
 
 // Sahifani yuklash va keshlash
 async function renderPage(pageNum) {
     if (isRendering) {
-        pageRenderingQueue = pageNum;
+        pageRenderingQueue.push(pageNum);
         return;
     }
 
@@ -46,12 +47,14 @@ async function renderPage(pageNum) {
     const page = await pdfDoc.getPage(pageNum);
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    
+
     const scale = getScaleFactor();
     const viewport = page.getViewport({ scale: scale });
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
+    // Yuqori sifatli rendering
+    context.imageSmoothingEnabled = true; // Rasm sifatini yaxshilash
     await page.render({
         canvasContext: context,
         viewport: viewport
@@ -60,18 +63,14 @@ async function renderPage(pageNum) {
     pdfViewer.appendChild(canvas);
     isRendering = false;
 
-    if (pageRenderingQueue) {
-        renderPage(pageRenderingQueue);
-        pageRenderingQueue = null;
-    }
-}
-
-// Har bir sahifani sekretsiya qilish orqali yuklash
-async function queueRenderPage(pageNum) {
-    if (pageNum <= pdfDoc.numPages) {
-        await renderPage(pageNum);
-        currentPage = pageNum + 1;
-        queueRenderPage(currentPage);
+    // Sahifalarni qator bilan yuklash
+    if (pageRenderingQueue.length > 0) {
+        renderPage(pageRenderingQueue.shift());
+    } else {
+        currentPage++; // Hozirgi sahifani yangilash
+        if (currentPage <= pdfDoc.numPages) {
+            renderPage(currentPage); // Keyingi sahifani yuklash
+        }
     }
 }
 
@@ -82,7 +81,8 @@ async function loadPDF(lang) {
     try {
         pdfDoc = await pdfjsLib.getDocument(url).promise;
         currentPage = 1;
-        queueRenderPage(currentPage);
+        pdfViewer.innerHTML = ''; // Sahifalarni tozalash
+        renderPage(currentPage); // Faqat birinchi sahifani yuklash
     } catch (error) {
         console.error('Error loading PDF:', error);
     } finally {
@@ -92,7 +92,6 @@ async function loadPDF(lang) {
 
 // Yangi tilni tanlaganda keshni tozalash va PDF-ni qayta yuklash
 languageSelector.addEventListener('change', function() {
-    pdfViewer.innerHTML = '';
     localStorage.setItem('pdfLanguage', this.value);
     reloadMessage.textContent = reloadMessages[this.value];
     reloadMessage.style.display = 'block';
@@ -104,7 +103,15 @@ languageSelector.addEventListener('change', function() {
 window.onload = function() {
     const savedLanguage = localStorage.getItem('pdfLanguage') || 'uz';
     languageSelector.value = savedLanguage;
-    loadPDF(languageSelector.value);
+    loadPDF(savedLanguage);
     mainTitle.textContent = mainTitles[savedLanguage];
     reloadMessage.style.display = 'none';
 };
+
+// Qurilma o'lchovlarini yangilash va PDF ko'rinishini yangilash
+window.addEventListener('resize', function() {
+    if (pdfDoc) {
+        pdfViewer.innerHTML = ''; // Sahifalarni tozalash
+        renderPage(currentPage); // Hozirgi sahifani qayta yuklash
+    }
+});
