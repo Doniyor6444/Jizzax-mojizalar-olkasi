@@ -111,11 +111,11 @@ footer {
 @media (max-width: 768px) {
     .pdf-viewer {
         max-height: 85vh;
-        overflow-y: scroll; /* Skrollni yaxshilash */
+        overflow-y: scroll;
     }
     canvas {
         width: 100%;
-        height: auto; /* Mobilda moslashuvchan bo'lishi uchun */
+        height: auto;
     }
 }
 
@@ -126,6 +126,4 @@ footer {
     .viewer-container {
         padding: 10px;
     }
-    
-   
 }
