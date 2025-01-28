@@ -111,30 +111,22 @@ window.onload = function() {
     reloadMessage.style.display = 'none';  // Qayta yuklash xabarini yashirish
 };
 
-// Resizingni optimallashtirish: 'resize' voqeasini optimallashtirish
-let resizeTimeout;
+// Resizing va PDF yuklashni optimallashtirish
 window.addEventListener('resize', function() {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-        if (pdfDoc) {
-            pdfViewer.innerHTML = '';  // Eski sahifalarni tozalash
-            renderPage(currentPage);  // Sahifani qayta render qilish
-        }
-    }, 100);  // Resize holatidan keyin kichik kechikish
+    if (pdfDoc) {
+        pdfViewer.innerHTML = '';  // Eski sahifalarni tozalash
+        renderPage(currentPage);  // Sahifani qayta render qilish
+    }
 });
 
-// Lazy loadingni optimallashtirish: Scrollda keyingi sahifalarni yuklash
-let scrollTimeout;
+// Lazy loading: Scrollda keyingi sahifalarni yuklash
 pdfViewer.addEventListener('scroll', function() {
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-        if (!isScrolling && pdfViewer.scrollTop + pdfViewer.clientHeight >= pdfViewer.scrollHeight - 100) {
-            isScrolling = true;
-            if (currentPage < pdfDoc.numPages) {
-                currentPage++;
-                renderPage(currentPage);  // Keyingi sahifani render qilish
-            }
-            isScrolling = false;
+    if (!isScrolling && pdfViewer.scrollTop + pdfViewer.clientHeight >= pdfViewer.scrollHeight - 100) {
+        isScrolling = true;
+        if (currentPage < pdfDoc.numPages) {
+            currentPage++;
+            renderPage(currentPage);  // Keyingi sahifani render qilish
         }
-    }, 100);  // Scroll holatidan keyin kichik kechikish
+        isScrolling = false;
+    }
 });
