@@ -74,6 +74,11 @@ async function renderPage(pageNum) {
     // Keyingi sahifani render qilish
     if (pageRenderingQueue.length > 0) {
         renderPage(pageRenderingQueue.shift());
+    } else {
+        currentPage++;
+        if (currentPage <= pdfDoc.numPages) {
+            renderPage(currentPage);
+        }
     }
 }
 
