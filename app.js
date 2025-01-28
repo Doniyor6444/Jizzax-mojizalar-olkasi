@@ -74,11 +74,6 @@ async function renderPage(pageNum) {
     // Keyingi sahifani render qilish
     if (pageRenderingQueue.length > 0) {
         renderPage(pageRenderingQueue.shift());
-    } else {
-        currentPage++;
-        if (currentPage <= pdfDoc.numPages) {
-            renderPage(currentPage);
-        }
     }
 }
 
@@ -116,22 +111,30 @@ window.onload = function() {
     reloadMessage.style.display = 'none';  // Qayta yuklash xabarini yashirish
 };
 
-// Resizing va PDF yuklashni optimallashtirish
+// Resizingni optimallashtirish: 'resize' voqeasini optimallashtirish
+let resizeTimeout;
 window.addEventListener('resize', function() {
-    if (pdfDoc) {
-        pdfViewer.innerHTML = '';  // Eski sahifalarni tozalash
-        renderPage(currentPage);  // Sahifani qayta render qilish
-    }
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        if (pdfDoc) {
+            pdfViewer.innerHTML = '';  // Eski sahifalarni tozalash
+            renderPage(currentPage);  // Sahifani qayta render qilish
+        }
+    }, 100);  // Resize holatidan keyin kichik kechikish
 });
 
-// Lazy loading: Scrollda keyingi sahifalarni yuklash
+// Lazy loadingni optimallashtirish: Scrollda keyingi sahifalarni yuklash
+let scrollTimeout;
 pdfViewer.addEventListener('scroll', function() {
-    if (!isScrolling && pdfViewer.scrollTop + pdfViewer.clientHeight >= pdfViewer.scrollHeight - 100) {
-        isScrolling = true;
-        if (currentPage < pdfDoc.numPages) {
-            currentPage++;
-            renderPage(currentPage);  // Keyingi sahifani render qilish
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+        if (!isScrolling && pdfViewer.scrollTop + pdfViewer.clientHeight >= pdfViewer.scrollHeight - 100) {
+            isScrolling = true;
+            if (currentPage < pdfDoc.numPages) {
+                currentPage++;
+                renderPage(currentPage);  // Keyingi sahifani render qilish
+            }
+            isScrolling = false;
         }
-        isScrolling = false;
-    }
+    }, 100);  // Scroll holatidan keyin kichik kechikish
 });
