@@ -1,4 +1,3 @@
-
 // pdf.js worker'ini sozlash
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
@@ -74,18 +73,20 @@ async function renderPage(pageNum) {
 
     // Keyingi sahifani render qilish
     if (pageRenderingQueue.length > 0) {
-        renderPage(pageRenderingQueue.shift());
+        // `setTimeout` o'rniga `requestAnimationFrame` ishlating
+        requestAnimationFrame(() => renderPage(pageRenderingQueue.shift()));
     } else {
         currentPage++;
         if (currentPage <= pdfDoc.numPages) {
-            renderPage(currentPage);
+            // `setTimeout` o'rniga `requestAnimationFrame` ishlating
+            requestAnimationFrame(() => renderPage(currentPage));
         }
     }
 }
 
 // PDF-ni yuklash va keshga olish
 async function loadPDF(lang) {
-    const url = pdfFiles[lang];  // Query param qo'shish shart emas
+    const url = `${pdfFiles[lang]}?t=${new Date().getTime()}`;  // Keshni tozalash uchun query param qo'shish
     loadingIndicator.style.display = 'flex';
     try {
         pdfDoc = await pdfjsLib.getDocument(url).promise;
@@ -118,22 +119,27 @@ window.onload = function() {
 };
 
 // Resizing va PDF yuklashni optimallashtirish
+let resizeTimeout;
 window.addEventListener('resize', function() {
-    if (pdfDoc) {
-        pdfViewer.innerHTML = '';  // Eski sahifalarni tozalash
-        renderPage(currentPage);  // Sahifani qayta render qilish
-    }
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        if (pdfDoc) {
+            pdfViewer.innerHTML = '';  // Eski sahifalarni tozalash
+            renderPage(currentPage);  // Sahifani qayta render qilish
+        }
+    }, 100);  // 100ms oraliqda qayta render qilish
 });
 
 // Lazy loading: Scrollda keyingi sahifalarni yuklash
 pdfViewer.addEventListener('scroll', function() {
     if (!isScrolling && pdfViewer.scrollTop + pdfViewer.clientHeight >= pdfViewer.scrollHeight - 100) {
         isScrolling = true;
-        if (currentPage < pdfDoc.numPages) {
-            currentPage++;
-            renderPage(currentPage);  // Keyingi sahifani render qilish
-        }
-        isScrolling = false;
+        setTimeout(() => {
+            if (currentPage < pdfDoc.numPages) {
+                currentPage++;
+                renderPage(currentPage);  // Keyingi sahifani render qilish
+            }
+            isScrolling = false;
+        }, 50);  // Scrollni kechiktirish
     }
 });
-
