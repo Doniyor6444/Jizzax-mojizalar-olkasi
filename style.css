@@ -114,29 +114,16 @@ footer {
 @media (max-width: 768px) {
     .pdf-viewer {
         max-height: 85vh;
-<<<<<<< HEAD
-        overflow-y: scroll; /* Scrolling improvement */
-=======
         overflow-y: scroll;
->>>>>>> a3f4769 (HTML, CSS, JS fayllari yangilandi)
     }
 
     canvas {
         width: 100%;
-<<<<<<< HEAD
-        height: auto; /* Ensure responsive for mobile */
-    }
-
-    /* Fullscreen on mobile */
-    .viewer-container {
-        height: 100vh; /* Make the viewer full screen on mobile */
-=======
         height: auto;
     }
 
     .viewer-container {
         height: 100vh;
->>>>>>> a3f4769 (HTML, CSS, JS fayllari yangilandi)
         padding: 0;
         margin: 0;
     }
@@ -162,8 +149,4 @@ footer {
     footer p {
         font-size: 0.8rem;
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> a3f4769 (HTML, CSS, JS fayllari yangilandi)
