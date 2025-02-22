@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-// pdf.js worker'ini sozlash
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-=======
 // PDF.js worker'ini sozlash
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
->>>>>>> a3f4769 (HTML, CSS, JS fayllari yangilandi)
 
 // PDF fayllari va ularning tillari
 const pdfFiles = {
@@ -55,37 +50,6 @@ async function renderPage(pageNum) {
     }
 
     isRendering = true;
-<<<<<<< HEAD
-    const page = await pdfDoc.getPage(pageNum);
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d', { alpha: false });
-
-    // Sahifani yuqori sifatda render qilish
-    const scale = getScaleFactor() * window.devicePixelRatio; // Yaxshi sifat uchun scale ni to'g'ri hisoblash
-    const viewport = page.getViewport({ scale: scale });
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-
-    context.imageSmoothingEnabled = true;  // Yaxshi sifat uchun smoothingni yoqish
-
-    // Sahifani rendering qilish
-    await page.render({
-        canvasContext: context,
-        viewport: viewport
-    }).promise;
-
-    pdfViewer.appendChild(canvas);
-    isRendering = false;
-
-    // Keyingi sahifani render qilish
-    if (pageRenderingQueue.length > 0) {
-        // `setTimeout` o'rniga `requestAnimationFrame` ishlating
-        requestAnimationFrame(() => renderPage(pageRenderingQueue.shift()));
-    } else {
-        currentPage++;
-        if (currentPage <= pdfDoc.numPages) {
-            // `setTimeout` o'rniga `requestAnimationFrame` ishlating
-=======
     try {
         const page = await pdfDoc.getPage(pageNum);
         const canvas = document.createElement('canvas');
@@ -116,7 +80,6 @@ async function renderPage(pageNum) {
             requestAnimationFrame(() => renderPage(pageRenderingQueue.shift()));
         } else if (currentPage < pdfDoc.numPages) {
             currentPage++;
->>>>>>> a3f4769 (HTML, CSS, JS fayllari yangilandi)
             requestAnimationFrame(() => renderPage(currentPage));
         }
     }
@@ -140,20 +103,12 @@ async function loadPDF(lang) {
 
 // Tilni tanlash va PDF-ni yuklash
 languageSelector.addEventListener('change', function() {
-<<<<<<< HEAD
-    localStorage.setItem('pdfLanguage', this.value);  // Tanlangan tilni saqlash
-    reloadMessage.textContent = reloadMessages[this.value];  // Qayta yuklash xabarini yangilash
-    reloadMessage.style.display = 'block';  // Xabarni ko'rsatish
-    loadPDF(this.value);  // Tanlangan tilga mos PDF-ni yuklash
-    mainTitle.textContent = mainTitles[this.value];  // Bosh sarlavhani yangilash
-=======
     const lang = this.value;
     localStorage.setItem('pdfLanguage', lang);  // Tanlangan tilni saqlash
     reloadMessage.textContent = reloadMessages[lang];  // Qayta yuklash xabarini yangilash
     reloadMessage.style.display = 'block';  // Xabarni ko'rsatish
     loadPDF(lang);  // Tanlangan tilga mos PDF-ni yuklash
     mainTitle.textContent = mainTitles[lang];  // Bosh sarlavhani yangilash
->>>>>>> a3f4769 (HTML, CSS, JS fayllari yangilandi)
 });
 
 // Dastlabki PDF yuklash
@@ -189,8 +144,4 @@ pdfViewer.addEventListener('scroll', function() {
             isScrolling = false;
         }, 50);  // Scrollni kechiktirish
     }
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> a3f4769 (HTML, CSS, JS fayllari yangilandi)
