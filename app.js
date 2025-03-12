@@ -92,7 +92,7 @@ function observeLazyLoading() {
     }
 }
 
-// Til tanlash
+// select language
 languageSelector.addEventListener('change', function () {
     const lang = this.value;
     localStorage.setItem('pdfLanguage', lang);
